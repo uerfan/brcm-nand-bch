@@ -92,6 +92,7 @@ int main(int argc, char *argv[])
 
 		//fwrite(page_buffer, (SECTOR_SZ + OOB_SZ) * SECTORS_PER_PAGE, 1, stdout);
 	}
+	fwrite(page_buffer,(SECTOR_SZ + OOB_SZ) * SECTORS_PER_PAGE,1, fdb);
 	fclose(fda);
 	fclose(fdb);
 }
