@@ -22,7 +22,7 @@
 #define OOB_SZ 16
 #define SECTORS_PER_PAGE 4
 #define OOB_ECC_OFS 9
-#define OOB_ECC_LEN 7
+#define OOB_ECC_LEN 16
 
 // Wide right shift by 4 bits. Preserves the very first 4 bits of the output.
 static void shift_half_byte(const uint8_t *src, uint8_t *dest, size_t sz)
@@ -44,7 +44,7 @@ int main(int argc, char *argv[])
 		return -1;
         printf("init-bch success!\n");
 	FILE* fda = fopen("a.bin","rb");
-	//FILE* fdb = fopen("b.bin","rb");
+	FILE* fdb = fopen("b.bin","a+");
 	printf("file open success!\n");
 	uint8_t page_buffer[(SECTOR_SZ + OOB_SZ) * SECTORS_PER_PAGE];
 //	while (1)
@@ -92,6 +92,8 @@ int main(int argc, char *argv[])
 				//sector_oob[OOB_ECC_OFS + OOB_ECC_LEN - 1] |= ecc[OOB_ECC_LEN - 1] >> 4;
 				printf("encode success!\n");
 				fwrite(ecc,OOB_ECC_LEN,1,stdout);
+				fwrite(page_buffer,SECTOR_SZ,1,fdb);
+				fwrite(ecc,OOB_ECC_LEN,1,fdb);
 				printf("\n");
 			}
 		}
@@ -99,5 +101,5 @@ int main(int argc, char *argv[])
 		//fwrite(page_buffer, (SECTOR_SZ + OOB_SZ) * SECTORS_PER_PAGE, 1, stdout);
 //	}
 	fclose(fda);
-	//fclose(fdb);
+	fclose(fdb);
 }
