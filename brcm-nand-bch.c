@@ -89,6 +89,6 @@ int main(int argc, char *argv[])
 
 		//fwrite(page_buffer, (SECTOR_SZ + OOB_SZ) * SECTORS_PER_PAGE, 1, stdout);
 	}
-	fda.close();
-	fdb.close();
+	close(fda);
+	close(fdb);
 }
