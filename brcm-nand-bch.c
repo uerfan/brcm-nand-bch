@@ -47,12 +47,13 @@ int main(int argc, char *argv[])
 	FILE* fdb = fopen("b.bin","a+");
 	printf("file open success!\n");
 	uint8_t page_buffer[(SECTOR_SZ + OOB_SZ) * SECTORS_PER_PAGE];
-//	while (1)
-//	{
+	while (1)
+	{
 		if (fread(page_buffer,(SECTOR_SZ) * SECTORS_PER_PAGE,1, fda) != 1)
 		{
 			printf("read error! \n");
-			return 0;
+			break;
+			//return 0;
 		}
 		printf("read successful!\n");
 		fwrite(page_buffer,SECTOR_SZ * SECTORS_PER_PAGE,1, stdout);
@@ -99,7 +100,7 @@ int main(int argc, char *argv[])
 		}
 
 		//fwrite(page_buffer, (SECTOR_SZ + OOB_SZ) * SECTORS_PER_PAGE, 1, stdout);
-//	}
+	}
 	fclose(fda);
 	fclose(fdb);
 }
