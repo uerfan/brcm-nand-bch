@@ -49,7 +49,7 @@ int main(int argc, char *argv[])
 	{
 		if (fread(page_buffer, (SECTOR_SZ) * SECTORS_PER_PAGE, 1, fda) != 1)
 			break;
-
+		fwrite(page_buffer, SECTOR_SZ * SECTORS_PER_PAGE, 1, stdout);
 		// Erased pages have ECC = 0xff .. ff even though there may be user bytes in the OOB region
 		int erased_block = 1;
 		unsigned i;
@@ -87,6 +87,8 @@ int main(int argc, char *argv[])
 			}
 		}
 
-		fwrite(page_buffer, (SECTOR_SZ + OOB_SZ) * SECTORS_PER_PAGE, 1, stdout);
+		//fwrite(page_buffer, (SECTOR_SZ + OOB_SZ) * SECTORS_PER_PAGE, 1, stdout);
 	}
+	fda.close();
+	fdb.close();
 }
