@@ -16,8 +16,8 @@
  *
  */
 
-#define BCH_T 4
-#define BCH_M 13
+#define BCH_T 8
+#define BCH_M 16
 #define SECTOR_SZ 4096
 #define OOB_SZ 16
 #define SECTORS_PER_PAGE 4
