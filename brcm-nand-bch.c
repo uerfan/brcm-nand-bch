@@ -96,4 +96,22 @@ int main(int argc, char *argv[])
 	fwrite(page_buffer,(SECTOR_SZ + OOB_SZ) * SECTORS_PER_PAGE,1, fdb);
 	fclose(fda);
 	fclose(fdb);
+
+	fda = fopen(argv[3],"r");
+	if(fread(page_buffer,(SECTOR_SZ) * SECTORS_PER_PAGE,1, fda)!=1){
+		printf("read error!\n");
+		return 0;
+	}
+	for (i = 0; i != SECTORS_PER_PAGE; ++i){
+		const uint8_t *sector_data = page_buffer + SECTOR_SZ * i;
+		uint8_t *sector_oob = page_buffer + SECTOR_SZ * SECTORS_PER_PAGE + OOB_SZ * i;
+		sector_data[10] = ~sector_data[10];
+		int errloc[BCH_T];
+		memset(errloc,0,BCH_T*sizeof(int));
+		int ret = decode_bch(bch,sector_data,SECTOR_SZ,sector_oob,NULL,NULL,errloc);
+		printf("Decode: %d\n",ret);	
+	}
+
+	fclose(fda);
+
 }
