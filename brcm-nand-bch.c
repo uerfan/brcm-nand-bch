@@ -38,7 +38,7 @@ static void shift_half_byte(const uint8_t *src, uint8_t *dest, size_t sz)
 int main(int argc, char *argv[])
 {
 	if(argc < 4){
-		printf("USAGE: ./main 0 InputFile OutputFile")
+		printf("USAGE: ./main 0 InputFile OutputFile");
 		return 0;
 	}
 	unsigned poly = argc < 2 ? 0 : strtoul(argv[1], NULL, 0);
