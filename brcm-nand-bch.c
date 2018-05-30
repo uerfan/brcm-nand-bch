@@ -42,15 +42,22 @@ int main(int argc, char *argv[])
 	struct bch_control *bch = init_bch(BCH_N, BCH_T, poly);
 	if (!bch)
 		return -1;
-	FILE* fda = open("a.bin","rb");
-	FILE* fdb = open("b.bin","rb");
+        printf("init-bch success!\n");
+	FILE* fda = fopen("a.bin","rb");
+	//FILE* fdb = fopen("b.bin","rb");
+	printf("file open success!\n");
 	uint8_t page_buffer[(SECTOR_SZ + OOB_SZ) * SECTORS_PER_PAGE];
-	while (1)
-	{
-		if (fread(page_buffer, (SECTOR_SZ) * SECTORS_PER_PAGE, 1, fda) != 1)
-			break;
-		fwrite(page_buffer, SECTOR_SZ * SECTORS_PER_PAGE, 1, stdout);
+//	while (1)
+//	{
+		if (fread(page_buffer,(SECTOR_SZ) * SECTORS_PER_PAGE,1, fda) != 1)
+		{
+			printf("read error! \n");
+			return 0;
+		}
+		printf("read successful!\n");
+		fwrite(page_buffer,SECTOR_SZ * SECTORS_PER_PAGE,1, stdout);
 		// Erased pages have ECC = 0xff .. ff even though there may be user bytes in the OOB region
+		printf("\n");
 		int erased_block = 1;
 		unsigned i;
 		for (i = 0; i != SECTOR_SZ * SECTORS_PER_PAGE; ++i)
@@ -67,7 +74,7 @@ int main(int argc, char *argv[])
 			if (erased_block)
 			{
 				// erased page ECC consumes full 7 bytes, including high 4 bits set to 0xf
-				memset(sector_oob + OOB_ECC_OFS, 0xff, OOB_ECC_LEN);
+				memset(sector_oob, 0xff, OOB_ECC_LEN);
 			}
 			else
 			{
@@ -83,12 +90,14 @@ int main(int argc, char *argv[])
 				// copy the result in its OOB block, shifting right by 4 bits
 				//shift_half_byte(ecc, sector_oob + OOB_ECC_OFS, OOB_ECC_LEN - 1);
 				//sector_oob[OOB_ECC_OFS + OOB_ECC_LEN - 1] |= ecc[OOB_ECC_LEN - 1] >> 4;
+				printf("encode success!\n");
 				fwrite(ecc,OOB_ECC_LEN,1,stdout);
+				printf("\n");
 			}
 		}
 
 		//fwrite(page_buffer, (SECTOR_SZ + OOB_SZ) * SECTORS_PER_PAGE, 1, stdout);
-	}
-	close(fda);
-	close(fdb);
+//	}
+	fclose(fda);
+	//fclose(fdb);
 }
