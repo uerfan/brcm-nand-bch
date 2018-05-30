@@ -46,8 +46,8 @@ int main(int argc, char *argv[])
 	if (!bch)
 		return -1;
         printf("init-bch success!\n");
-	FILE* fda = fopen(argv[2],"rb");
-	FILE* fdb = fopen(argv[3],"rb");
+	FILE* fda = fopen(argv[2],"r");
+	FILE* fdb = fopen(argv[3],"w");
 	printf("file open success!\n");
 	uint8_t page_buffer[(SECTOR_SZ + OOB_SZ) * SECTORS_PER_PAGE];
 	while (1)
@@ -92,6 +92,7 @@ int main(int argc, char *argv[])
 
 		//fwrite(page_buffer, (SECTOR_SZ + OOB_SZ) * SECTORS_PER_PAGE, 1, stdout);
 	}
+        //fwrite(page_buffer,(SECTOR_SZ + OOB_SZ) * SECTORS_PER_PAGE,1, stdout);
 	fwrite(page_buffer,(SECTOR_SZ + OOB_SZ) * SECTORS_PER_PAGE,1, fdb);
 	fclose(fda);
 	fclose(fdb);
