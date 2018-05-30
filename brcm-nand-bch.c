@@ -37,21 +37,24 @@ static void shift_half_byte(const uint8_t *src, uint8_t *dest, size_t sz)
 
 int main(int argc, char *argv[])
 {
+	if(argc < 4){
+		printf("USAGE: ./main 0 InputFile OutputFile")
+		return 0;
+	}
 	unsigned poly = argc < 2 ? 0 : strtoul(argv[1], NULL, 0);
-
 	struct bch_control *bch = init_bch(BCH_N, BCH_T, poly);
 	if (!bch)
 		return -1;
         printf("init-bch success!\n");
-	FILE* fda = fopen("a.bin","rb");
-	FILE* fdb = fopen("b.bin","a+");
+	FILE* fda = fopen(argv[2],"rb");
+	FILE* fdb = fopen(argv[3],"rb");
 	printf("file open success!\n");
 	uint8_t page_buffer[(SECTOR_SZ + OOB_SZ) * SECTORS_PER_PAGE];
 	while (1)
 	{
 		if (fread(page_buffer,(SECTOR_SZ) * SECTORS_PER_PAGE,1, fda) != 1)
 		{
-			printf("read error! \n");
+			printf("read finished!\n");
 			break;
 			//return 0;
 		}
@@ -78,24 +81,12 @@ int main(int argc, char *argv[])
 				memset(sector_oob, 0xff, OOB_ECC_LEN);
 			}
 			else
-			{
-				// concatenate input data
-				//uint8_t buffer[SECTOR_SZ + OOB_ECC_OFS + 1];
-				//buffer[0] = 0;
-				//shift_half_byte(sector_data, buffer, SECTOR_SZ);
-				//shift_half_byte(sector_oob, buffer + SECTOR_SZ, OOB_ECC_OFS);
+			{	
 				// compute ECC
-				uint8_t ecc[OOB_ECC_LEN];
-				memset(ecc, 0, OOB_ECC_LEN);
-				encode_bch(bch, page_buffer, SECTOR_SZ, ecc);
-				// copy the result in its OOB block, shifting right by 4 bits
-				//shift_half_byte(ecc, sector_oob + OOB_ECC_OFS, OOB_ECC_LEN - 1);
-				//sector_oob[OOB_ECC_OFS + OOB_ECC_LEN - 1] |= ecc[OOB_ECC_LEN - 1] >> 4;
+				memset(sector_oob, 0, OOB_ECC_LEN);
+				encode_bch(bch, sector_data, SECTOR_SZ, sector_oob);
 				printf("encode success!\n");
-				fwrite(ecc,OOB_ECC_LEN,1,stdout);
-				fwrite(page_buffer,SECTOR_SZ,1,fdb);
-				fwrite(ecc,OOB_ECC_LEN,1,fdb);
-				printf("\n");
+				fwrite(sector_oob,OOB_ECC_LEN,1,stdout);
 			}
 		}
 
