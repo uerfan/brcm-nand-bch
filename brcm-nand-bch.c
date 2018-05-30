@@ -17,7 +17,7 @@
  */
 
 #define BCH_T 4
-#define BCH_N 13
+#define BCH_M 13
 #define SECTOR_SZ 4096
 #define OOB_SZ 16
 #define SECTORS_PER_PAGE 4
@@ -42,7 +42,7 @@ int main(int argc, char *argv[])
 		return 0;
 	}
 	unsigned poly = argc < 2 ? 0 : strtoul(argv[1], NULL, 0);
-	struct bch_control *bch = init_bch(BCH_N, BCH_T, poly);
+	struct bch_control *bch = init_bch(BCH_M, BCH_T, poly);
 	if (!bch)
 		return -1;
         printf("init-bch success!\n");
