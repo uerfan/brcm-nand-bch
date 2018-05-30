@@ -42,11 +42,12 @@ int main(int argc, char *argv[])
 	struct bch_control *bch = init_bch(BCH_N, BCH_T, poly);
 	if (!bch)
 		return -1;
-
+	FILE* fda = open("a.bin","rb");
+	FILE* fdb = open("b.bin","rb");
 	uint8_t page_buffer[(SECTOR_SZ + OOB_SZ) * SECTORS_PER_PAGE];
 	while (1)
 	{
-		if (fread(page_buffer, (SECTOR_SZ + OOB_SZ) * SECTORS_PER_PAGE, 1, stdin) != 1)
+		if (fread(page_buffer, (SECTOR_SZ) * SECTORS_PER_PAGE, 1, fda) != 1)
 			break;
 
 		// Erased pages have ECC = 0xff .. ff even though there may be user bytes in the OOB region
@@ -71,17 +72,18 @@ int main(int argc, char *argv[])
 			else
 			{
 				// concatenate input data
-				uint8_t buffer[SECTOR_SZ + OOB_ECC_OFS + 1];
-				buffer[0] = 0;
-				shift_half_byte(sector_data, buffer, SECTOR_SZ);
-				shift_half_byte(sector_oob, buffer + SECTOR_SZ, OOB_ECC_OFS);
+				//uint8_t buffer[SECTOR_SZ + OOB_ECC_OFS + 1];
+				//buffer[0] = 0;
+				//shift_half_byte(sector_data, buffer, SECTOR_SZ);
+				//shift_half_byte(sector_oob, buffer + SECTOR_SZ, OOB_ECC_OFS);
 				// compute ECC
 				uint8_t ecc[OOB_ECC_LEN];
 				memset(ecc, 0, OOB_ECC_LEN);
-				encode_bch(bch, buffer, SECTOR_SZ + OOB_ECC_OFS + 1, ecc);
+				encode_bch(bch, page_buffer, SECTOR_SZ, ecc);
 				// copy the result in its OOB block, shifting right by 4 bits
-				shift_half_byte(ecc, sector_oob + OOB_ECC_OFS, OOB_ECC_LEN - 1);
-				sector_oob[OOB_ECC_OFS + OOB_ECC_LEN - 1] |= ecc[OOB_ECC_LEN - 1] >> 4;
+				//shift_half_byte(ecc, sector_oob + OOB_ECC_OFS, OOB_ECC_LEN - 1);
+				//sector_oob[OOB_ECC_OFS + OOB_ECC_LEN - 1] |= ecc[OOB_ECC_LEN - 1] >> 4;
+				fwrite(ecc,OOB_ECC_LEN,1,stdout);
 			}
 		}
 
