@@ -48,10 +48,7 @@ static void write2file(uint8_t* data,int len,int i,int j){
 
 int main(int argc, char *argv[])
 {
-	if(argc < 4){
-		printf("USAGE: ./main InputFile OutputFile");
-		return 0;
-	}
+	
 	unsigned poly = 0;
 	struct bch_control *bch = init_bch(BCH_M, BCH_T, poly);
 	
@@ -62,7 +59,7 @@ int main(int argc, char *argv[])
     printf("init-bch success!\n");
 	
 	// odinary ECC generate 
-	FILE* fda = fopen(argv[2],"r");
+	FILE* fda = fopen("a.bin","r");
 	printf("file open success!\n");
 	uint8_t page_buffer[DATA_SZ + OOB_ECC_LEN];
 	if (fread(page_buffer,DATA_SZ + OOB_ECC_LEN,1, fda) != 1)
