@@ -89,10 +89,10 @@ int main(int argc, char *argv[])
 			if(ret>=0){
 				printf("Decode flips=%d ret: %d\n",i*8+j,ret);
 			}
-			//if(ret>=0 && i*8+j>BCH_T){
+			if(ret>=0 && i*8+j>BCH_T){
 				write2file(sector_data,DATA_SZ,i,j);	
-			//}
-			flip_bit(sector_data,i,j);
+			}
+			//flip_bit(sector_data,i,j);
 			
 		}
 	}
