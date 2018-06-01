@@ -16,13 +16,13 @@
  *
  */
 
-#define BCH_T 4
-#define BCH_M 15
-#define SECTOR_SZ 2048
-#define OOB_SZ 8
-#define SECTORS_PER_PAGE 8
+#define BCH_T 16
+#define BCH_M 13
+#define SECTOR_SZ 512
+#define OOB_SZ 64
+#define SECTORS_PER_PAGE 4
 #define OOB_ECC_OFS 0
-#define OOB_ECC_LEN 8
+#define OOB_ECC_LEN 26
 
 // Wide right shift by 4 bits. Preserves the very first 4 bits of the output.
 static void shift_half_byte(const uint8_t *src, uint8_t *dest, size_t sz)
@@ -109,9 +109,10 @@ int main(int argc, char *argv[])
 	for (i = 0; i != SECTORS_PER_PAGE; ++i){
 		uint8_t *sector_data = page_buffer + SECTOR_SZ * i;
 		uint8_t *sector_oob = page_buffer + SECTOR_SZ * SECTORS_PER_PAGE + OOB_SZ * i;
-		sector_data[10] = (sector_data[10] & 0xF0) | ((~(sector_data[10] & 0x0F)) & 0x0F);
+		//sector_data[10] = (sector_data[10] & 0xF0) | ((~(sector_data[10] & 0x0F)) & 0x0F);
+		sector_data[10] = ~sector_data[10];
 		unsigned int errloc[BCH_T];
-		memset(errloc,0,BCH_T*sizeof(int));
+		//memset(errloc,0,BCH_T*sizeof(int));
 		int ret = decode_bch(bch,sector_data,SECTOR_SZ,sector_oob,NULL,NULL,errloc);
 		printf("Decode ret: %d\n",ret);
 		int j=0;
@@ -121,8 +122,8 @@ int main(int argc, char *argv[])
 		}
 		printf("\n");
 		//sector_data[errloc[n]/8] ^= 1 << (errloc[n] % 8);
-		memset(errloc,0,BCH_T*sizeof(int));
-	        ret = decode_bch(bch,sector_data,SECTOR_SZ,sector_oob,NULL,NULL,errloc);			
+		//memset(errloc,0,BCH_T*sizeof(int));
+	        ret = decode_bch(bch,sector_data,SECTOR_SZ,sector_oob,sector_oob,NULL,errloc);			
 		printf("Decode validation ret: %d\n",ret);
 	}
 

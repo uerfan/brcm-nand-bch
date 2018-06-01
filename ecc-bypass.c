@@ -45,7 +45,7 @@ static void write2file(uint8_t* data,int len,int i,int j){
 	strcat(str,itoa(j)); 
 	strcat(str,".dat"); 
 
-	FILE *temp = fopen("w");
+	FILE *temp = fopen(str,"w");
 	fwrite(data,len,1,temp);
 	fclose(temp);
 }
@@ -79,14 +79,14 @@ int main(int argc, char *argv[])
 	uint8_t *sector_data = page_buffer;
 	uint8_t *sector_oob = page_buffer + DATA_SZ;
 	memset(sector_oob, 0, OOB_ECC_LEN);
-	encode_bch(bch, sector_data, SECTOR_SZ, sector_oob);
+	encode_bch(bch, sector_data, DATA_SZ, sector_oob);
 	printf("encode successful!\n");
 	fclose(fda);
 	
 
 	uint8_t *validate_ecc[OOB_ECC_LEN];
 	unsigned int errloc[BCH_T];
-	int j=0;
+	int i,j=0;
 	int sum_big_0=0;
 	int sum_small_0=0;
 	for (i = 0; i != DATA_SZ; ++i){
@@ -94,7 +94,7 @@ int main(int argc, char *argv[])
 			flip_bit(sector_data,i,j);
 		}
 		memset(errloc,0,BCH_T*sizeof(int));
-		int ret = decode_bch(bch,sector_data,SECTOR_SZ,sector_oob,NULL,NULL,errloc);
+		int ret = decode_bch(bch,sector_data,DATA_SZ,sector_oob,NULL,NULL,errloc);
 		if(ret>0 && i*8+j>BCH_T){
 			write2file(sector_data,DATA_SZ,i,j);
 		}
