@@ -81,7 +81,7 @@ int main(int argc, char *argv[])
 	int i,j=0;
 	int sum_big_0=0;
 	int sum_small_0=0;
-	for (i = 0; i != DATA_SZ; i++){
+	for (i = 0; i != DATA_SZ + OOB_ECC_LEN; i++){
 		for(j = 0; j < 8; j++){
 			flip_bit(sector_data,i,j);
 			memset(errloc,0,BCH_T*sizeof(int));
@@ -89,9 +89,10 @@ int main(int argc, char *argv[])
 			if(ret>=0){
 				printf("Decode flips=%d ret: %d\n",i*8+j,ret);
 			}
-			if(ret>=0 && i*8+j>BCH_T){
+			//if(ret>=0 && i*8+j>BCH_T){
 				write2file(sector_data,DATA_SZ,i,j);	
-			}
+			//}
+			flip_bit(sector_data,i,j);
 			
 		}
 	}
