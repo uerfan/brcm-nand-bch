@@ -39,12 +39,7 @@ static void flip_bit(uint8_t* data,int arr_off,int inner_off){
 
 static void write2file(uint8_t* data,int len,int i,int j){
 	char str[80];
-	strcat(str,"flip_"); 
-	strcat(str,itoa(i)); 
-	strcat(str,"_"); 
-	strcat(str,itoa(j)); 
-	strcat(str,".dat"); 
-
+	sprintf(str,"flip_%d_%d.dat",i,j);
 	FILE *temp = fopen(str,"w");
 	fwrite(data,len,1,temp);
 	fclose(temp);
