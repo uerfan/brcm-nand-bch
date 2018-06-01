@@ -84,13 +84,13 @@ int main(int argc, char *argv[])
 	for (i = 0; i != DATA_SZ; ++i){
 		for(j = 0; j < 8; ++ j){
 			flip_bit(sector_data,i,j);
+			memset(errloc,0,BCH_T*sizeof(int));
+			int ret = decode_bch(bch,sector_data,DATA_SZ,sector_oob,NULL,NULL,errloc);
+			if(ret>0 && i*8+j>BCH_T){
+				write2file(sector_data,DATA_SZ,i,j);
+			}
+			printf("Decode ret: %d\n",ret);	
 		}
-		memset(errloc,0,BCH_T*sizeof(int));
-		int ret = decode_bch(bch,sector_data,DATA_SZ,sector_oob,NULL,NULL,errloc);
-		if(ret>0 && i*8+j>BCH_T){
-			write2file(sector_data,DATA_SZ,i,j);
-		}
-		printf("Decode ret: %d\n",ret);	
 	}
 
 }
