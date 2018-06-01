@@ -86,10 +86,13 @@ int main(int argc, char *argv[])
 			flip_bit(sector_data,i,j);
 			memset(errloc,0,BCH_T*sizeof(int));
 			int ret = decode_bch(bch,sector_data,DATA_SZ,sector_oob,NULL,NULL,errloc);
-			if(ret>0 && i*8+j>BCH_T){
-				write2file(sector_data,DATA_SZ,i,j);
+			if(ret>=0){
+				printf("Decode flips=%d ret: %d\n",i*8+j,ret);
 			}
-			printf("Decode ret: %d\n",ret);	
+			if(ret>=0 && i*8+j>BCH_T){
+				write2file(sector_data,DATA_SZ,i,j);	
+			}
+			
 		}
 	}
 
